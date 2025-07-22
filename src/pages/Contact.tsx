@@ -1,53 +1,27 @@
-import React, { useState } from 'react';
+"use client";
+
+import React, { useEffect, useState } from "react";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import LocationsSection from "@/components/LocationsSection";
-import { motion, AnimatePresence } from 'framer-motion';
-import { Send, CheckCircle, AlertCircle } from 'lucide-react';
+import { motion, AnimatePresence } from "framer-motion";
+import { Send, CheckCircle, AlertCircle } from "lucide-react";
+import { useSearchParams } from "next/navigation";
 
 const Contact = () => {
+  const searchParams = useSearchParams();
   const [success, setSuccess] = useState(false);
-  const [error, setError] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const form = e.currentTarget;
-    const formData = new FormData(form);
-
-    formData.append('_subject', 'New Contact Form Message from Website');
-    formData.append('_template', 'box');
-    formData.append('_captcha', 'false');
-    formData.append('_next', 'https://yourwebsite.com/thank-you'); // Optional if you're handling in-page
-
-    try {
-      const response = await fetch('https://formsubmit.co/ajax/karthikjungleemara@gmail.com', {
-        method: 'POST',
-        headers: {
-          Accept: 'application/json',
-        },
-        body: formData,
-      });
-
-      const result = await response.json();
-
-      if (result.success) {
-        setSuccess(true);
-        form.reset();
-        setTimeout(() => setSuccess(false), 4000);
-      } else {
-        setError(true);
-        setTimeout(() => setError(false), 4000);
-        console.error(result);
-      }
-    } catch (err) {
-      console.error("Submission error:", err);
-      setError(true);
-      setTimeout(() => setError(false), 4000);
+  useEffect(() => {
+    if (searchParams.get("success") === "true") {
+      setSuccess(true);
+      const timer = setTimeout(() => setSuccess(false), 5000);
+      return () => clearTimeout(timer);
     }
-  };
+  }, [searchParams]);
 
   return (
     <div className="min-h-screen flex flex-col relative">
@@ -67,9 +41,12 @@ const Contact = () => {
             transition={{ delay: 0.2, duration: 0.8 }}
             className="text-center px-4 relative z-10"
           >
-            <h1 className="text-4xl md:text-5xl font-bold text-white mb-5">Contact Us</h1>
+            <h1 className="text-4xl md:text-5xl font-bold text-white mb-5">
+              Contact Us
+            </h1>
             <p className="text-lg text-white/90 max-w-2xl mx-auto font-light">
-              LET'S TALK - We're here to help and answer any questions you might have.
+              LET'S TALK - We're here to help and answer any questions you might
+              have.
             </p>
           </motion.div>
         </motion.section>
@@ -90,10 +67,29 @@ const Contact = () => {
             >
               <h2 className="text-2xl font-bold mb-4">Send us a Message</h2>
               <p className="text-gray-600 mb-6">
-                Fill in the form below and we'll get back to you as soon as possible.
+                Fill in the form below and we'll get back to you as soon as
+                possible.
               </p>
 
-              <form onSubmit={handleSubmit} className="space-y-5">
+              <form
+                action="https://formsubmit.co/karthikjungleemara@gmail.com"
+                method="POST"
+                className="space-y-5"
+              >
+                {/* Hidden Fields */}
+                <input
+                  type="hidden"
+                  name="_subject"
+                  value="New Contact Form Message from Website"
+                />
+                <input type="hidden" name="_template" value="box" />
+                <input type="hidden" name="_captcha" value="false" />
+                <input
+                  type="hidden"
+                  name="_next"
+                  value="https://yourwebsite.com/contact?success=true"
+                />
+
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <Input
                     placeholder="First Name"
@@ -145,7 +141,7 @@ const Contact = () => {
                 </motion.div>
               </form>
 
-              {/* Notification Popups */}
+              {/* Success Popup */}
               <AnimatePresence>
                 {success && (
                   <motion.div
@@ -156,17 +152,6 @@ const Contact = () => {
                   >
                     <CheckCircle className="text-green-600" />
                     Your message has been sent successfully!
-                  </motion.div>
-                )}
-                {error && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: 20 }}
-                    className="mt-6 p-4 bg-red-100 text-red-700 rounded-lg flex items-center gap-2"
-                  >
-                    <AlertCircle className="text-red-600" />
-                    Oops! Something went wrong. Please try again.
                   </motion.div>
                 )}
               </AnimatePresence>
