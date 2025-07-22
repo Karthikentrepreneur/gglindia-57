@@ -17,18 +17,23 @@ const Contact = () => {
     const form = e.currentTarget;
     const formData = new FormData(form);
 
+    formData.append('_subject', 'New Contact Form Message from Website');
+    formData.append('_template', 'box');
+    formData.append('_captcha', 'false');
+    formData.append('_next', 'https://yourwebsite.com/thank-you'); // Optional if you're handling in-page
+
     try {
-      const response = await fetch("https://formsubmit.co/ajax/karthikjungleemara@gmail.com", {
-        method: "POST",
+      const response = await fetch('https://formsubmit.co/ajax/karthikjungleemara@gmail.com', {
+        method: 'POST',
         headers: {
-          Accept: "application/json",
+          Accept: 'application/json',
         },
         body: formData,
       });
 
       const result = await response.json();
 
-      if (result.success === "true") {
+      if (result.success) {
         setSuccess(true);
         form.reset();
         setTimeout(() => setSuccess(false), 4000);
@@ -37,8 +42,8 @@ const Contact = () => {
         setTimeout(() => setError(false), 4000);
         console.error(result);
       }
-    } catch (error) {
-      console.error("Error submitting form:", error);
+    } catch (err) {
+      console.error("Submission error:", err);
       setError(true);
       setTimeout(() => setError(false), 4000);
     }
@@ -87,6 +92,7 @@ const Contact = () => {
               <p className="text-gray-600 mb-6">
                 Fill in the form below and we'll get back to you as soon as possible.
               </p>
+
               <form onSubmit={handleSubmit} className="space-y-5">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <Input
@@ -127,11 +133,6 @@ const Contact = () => {
                   required
                   className="min-h-[120px] border-gray-200 focus:ring-blue-500"
                 />
-
-                {/* Hidden Fields for FormSubmit */}
-                <input type="hidden" name="_subject" value="New Contact Form Message from Website" />
-                <input type="hidden" name="_template" value="box" />
-                <input type="hidden" name="_captcha" value="false" />
 
                 <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
                   <Button
