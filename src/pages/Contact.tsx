@@ -1,4 +1,3 @@
-"use client";
 
 import React, { useEffect, useState } from "react";
 import { Header } from "@/components/layout/Header";
@@ -72,7 +71,7 @@ const Contact = () => {
               </p>
 
               <form
-                action="https://formsubmit.co/karthikjungleemara@gmail.com"
+                action="https://formsubmit.co/ajax/karthikjungleemara@gmail.com"
                 method="POST"
                 className="space-y-5"
               >
